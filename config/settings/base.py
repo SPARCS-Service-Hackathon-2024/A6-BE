@@ -5,7 +5,13 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Application definition
-CUSTOM_APPS = ["common", "users", "plant", "farm"]
+CUSTOM_APPS = [
+    "common",
+    "users",
+    "plant",
+    "farm",
+    "diary",
+]
 
 SYSTEM_APPS = [
     "django.contrib.admin",
