@@ -188,3 +188,7 @@ media/
 
 # log file
 log.django
+
+Dockerfile
+
+docker-compose.yml
