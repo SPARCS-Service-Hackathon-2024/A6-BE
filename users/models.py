@@ -4,6 +4,7 @@ from django.apps import apps
 from django.contrib import auth
 from django.contrib.auth.hashers import make_password
 from rest_framework.authtoken.models import Token
+from common.models import CommonModel
 
 
 class CustomUserManager(UserManager):
@@ -103,3 +104,11 @@ class User(AbstractUser):
 
     class Meta:
         db_table = "User"
+
+
+class Jwt(CommonModel):
+    user = models.OneToOneField(
+        User, related_name="login_user", on_delete=models.CASCADE, help_text="회원"
+    )
+    access = models.TextField(help_text="Access Token")
+    refresh = models.TextField(help_text="Refresh Token")
