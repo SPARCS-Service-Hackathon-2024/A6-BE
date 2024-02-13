@@ -1,4 +1,5 @@
 -r base.txt
 django_cron
+mysqlclient
 gunicorn==20.1.0
 emoji==1.7.0
