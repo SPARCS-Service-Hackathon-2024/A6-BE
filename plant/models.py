@@ -5,10 +5,10 @@ from common.models import CommonModel
 class PlantType(CommonModel):
     """Plant Model Definition"""
 
-    name = models.CharField(max_length=50)
-    main_image = models.TextField(blank=True, null=True, default="")
-    watering_cycle = models.PositiveIntegerField()
-    repotting_cycle = models.PositiveIntegerField()
+    name = models.CharField(max_length=50, help_text="이름")
+    main_image = models.TextField(blank=True, null=True, default="", help_text="대표 이미지")
+    watering_cycle = models.PositiveIntegerField(help_text="물주기 주기")
+    repotting_cycle = models.PositiveIntegerField(help_text="분갈이 주기")
 
     def __str__(self):
         return self.name
@@ -17,22 +17,24 @@ class PlantType(CommonModel):
 class Plant(CommonModel):
     """PersonalPlant Model Definition"""
 
-    nickname = models.CharField(max_length=50)
-    main_image = models.TextField(blank=True, null=True, default="")
+    nickname = models.CharField(max_length=50, help_text="별명")
+    main_image = models.TextField(blank=True, null=True, default="", help_text="대표 이미지")
     plant_type = models.ForeignKey(
         "plant.PlantType",
         related_name="plants",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        help_text="식물 종류",
     )
-    start_at = models.DateField()
+    start_at = models.DateField(help_text="시작일")
     user = models.ForeignKey(
         "users.User",
         related_name="plants",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        help_text="유저",
     )
 
     def __str__(self):
@@ -48,13 +50,16 @@ class PlantLog(CommonModel):
         repotting = ("분갈이", "분갈이")
 
     type = models.CharField(
-        max_length=20, choices=TypeChoices.choices, default=TypeChoices.watering
+        max_length=20,
+        choices=TypeChoices.choices,
+        default=TypeChoices.watering,
+        help_text="로그 타입",
     )
-    deadline = models.DateField(null=True, blank=True)
-    complete_at = models.DateField(null=True, blank=True)
-    is_complete = models.BooleanField(default=False)
+    deadline = models.DateField(null=True, blank=True, help_text="마감일")
+    complete_at = models.DateField(null=True, blank=True, help_text="완료기간")
+    is_complete = models.BooleanField(default=False, help_text="완료 여부")
     plant = models.ForeignKey(
-        "plant.Plant", related_name="logs", on_delete=models.CASCADE
+        "plant.Plant", related_name="logs", on_delete=models.CASCADE, help_text="식물"
     )
 
     def __str__(self):
