@@ -5,7 +5,7 @@ from django.conf import settings
 import random
 import string
 from .models import User, Jwt
-from api.exceptions import CustomValidationError, CustomAuthorizationError
+from utils.exceptions import CustomValidationError, CustomAuthorizationError
 
 
 def get_random(length):
