@@ -1,5 +1,5 @@
 -r base.txt
-django_cron
 mysqlclient
+django_cron
 gunicorn==20.1.0
 emoji==1.7.0
