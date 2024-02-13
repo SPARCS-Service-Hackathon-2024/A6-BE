@@ -77,7 +77,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "ko-kr"
 
 TIME_ZONE = "Asia/Seoul"
 
@@ -86,11 +86,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = False
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
-STATIC_URL = "/static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -118,9 +113,23 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
+    "DEFAULT_PAGINATION_CLASS": "utils.pagination.CustomPageNumberPagination",
+    "PAGE_SIZE": 10,
 }
 
 MAX_UPLOAD_SIZE = 52428800
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
 FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:3000"]
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+
+ACCESS_TOKEN_EXPIRATION_TIME = 60  # 60 minutes
+REFRESH_TOKEN_EXPIRATION_TIME = 60 * 24  # 1 day
