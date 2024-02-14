@@ -11,6 +11,7 @@ from .models import PlantType, Plant, PlantLog
 from django.db import transaction
 from utils.media import save_media
 from utils.authentication import IsAuthenticatedCustom
+from utils.exceptions import CustomValidationError
 from datetime import datetime, timedelta, date
 from .utils import create_plant_log
 
@@ -126,5 +127,51 @@ class MyPlantLogListAPI(generics.GenericAPIView):
         return Response(data=data, status=status.HTTP_200_OK)
 
 
-# class PlantLogCompleteAPI(generics.UpdateAPIView):
-# queryset = PlantLog.
+class PlantLogCompleteAPI(generics.UpdateAPIView):
+    queryset = PlantLog.objects.all()
+    permission_classes = (IsAuthenticatedCustom,)
+
+    def get_queryset(self):
+        return self.queryset.filter(plant__user=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        user = request.user
+        instance = self.get_object()
+        if not instance.plant.user == user:
+            raise CustomValidationError({"data": "본인의 작물만 완료처리 할 수 있습니다."})
+        plant = instance.plant
+        type = instance.type
+        cycle = (
+            plant.plant_type.watering_cycle
+            if instance.type == "물주기"
+            else plant.plant_type.repotting_cycle
+        )
+        instance.is_complete = True
+        instance.save()
+
+        new_log = create_plant_log(plant, type, datetime.now() + timedelta(days=cycle))
+
+        queryset = self.get_queryset()
+        watering_query = queryset.filter(
+            type="물주기", is_complete=False, deadline__lte=date.today()
+        )
+        repotting_query = queryset.filter(
+            type="분갈이", is_complete=False, deadline__lte=date.today()
+        )
+        watering_complete_query = queryset.filter(
+            type="물주기", is_complete=True, complete_at=date.today()
+        )
+        repotting_complete_query = queryset.filter(
+            type="분갈이", is_complete=True, complete_at=date.today()
+        )
+        data = {
+            "watering": MyPlantLogReadSerializer(watering_query, many=True).data,
+            "repotting": MyPlantLogReadSerializer(repotting_query, many=True).data,
+            "watering_complete": MyPlantLogReadSerializer(
+                watering_complete_query, many=True
+            ).data,
+            "repotting_complete": MyPlantLogReadSerializer(
+                repotting_complete_query, many=True
+            ).data,
+        }
+        return Response(data=data, status=status.HTTP_200_OK)
