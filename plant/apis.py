@@ -8,6 +8,7 @@ from .serializers import (
     MyPlantLogReadSerializer,
     PlantDetailSerializer,
     PlantLogListSerializer,
+    PlantTypeDetailSerializer,
 )
 from .models import PlantType, Plant, PlantLog
 from django.db import transaction
@@ -191,9 +192,7 @@ class PlantDetailAPI(generics.RetrieveAPIView):
         not_complete_query = queryset.filter(
             is_complete=False, deadline__lte=date.today()
         )
-        complete_query = queryset.filter(
-            type="물주기", is_complete=True, complete_at=date.today()
-        )
+        complete_query = queryset.filter(is_complete=True, complete_at=date.today())
         combined_query = not_complete_query | complete_query
 
         combined_data = MyPlantLogReadSerializer(combined_query, many=True).data
@@ -232,3 +231,8 @@ class PlantTodoCompleteAPI(generics.UpdateAPIView):
         new_log = create_plant_log(plant, type, datetime.now() + timedelta(days=cycle))
 
         return Response({"data": "complete !! ^^"})
+
+
+class PlantTypeDetailAPI(generics.RetrieveAPIView):
+    queryset = PlantType.objects.all()
+    serializer_class = PlantTypeDetailSerializer

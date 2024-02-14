@@ -16,7 +16,15 @@ class PlantTypeReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PlantType
-        fields = "__all__"
+        fields = [
+            "id",
+            "main_image",
+            "created_at",
+            "updated_at",
+            "name",
+            "watering_cycle",
+            "repotting_cycle",
+        ]
 
     def get_main_image(self, obj):
         return settings.MEDIA_URL + obj.main_image if obj.main_image else None
@@ -88,3 +96,14 @@ class PlantLogListSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlantLog
         fields = ["type", "complete_at"]
+
+
+class PlantTypeDetailSerializer(serializers.ModelSerializer):
+    main_image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PlantType
+        fields = "__all__"
+
+    def get_main_image(self, obj):
+        return settings.MEDIA_URL + obj.main_image if obj.main_image else None

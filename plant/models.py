@@ -8,8 +8,33 @@ class PlantType(CommonModel):
 
     name = models.CharField(max_length=50, help_text="이름")
     main_image = models.TextField(blank=True, null=True, default="", help_text="대표 이미지")
-    watering_cycle = models.PositiveIntegerField(help_text="물주기 주기")
-    repotting_cycle = models.PositiveIntegerField(help_text="분갈이 주기")
+    watering_cycle = models.PositiveIntegerField(
+        blank=True, null=True, default="", help_text="물주기 주기"
+    )
+    repotting_cycle = models.PositiveIntegerField(
+        blank=True, null=True, default="", help_text="분갈이 주기"
+    )
+    introduction = models.TextField(
+        blank=True, null=True, default="", help_text="작물 소개"
+    )
+    sunlight = models.CharField(
+        blank=True, null=True, default="", max_length=300, help_text="햇빛"
+    )
+    temperature = models.CharField(
+        blank=True, null=True, default="", max_length=200, help_text="온도"
+    )
+    humidity = models.CharField(
+        blank=True, null=True, default="", max_length=200, help_text="습도"
+    )
+    watering_method = models.CharField(
+        blank=True, null=True, default="", max_length=300, help_text="물 주기 방법"
+    )
+    blooming_season = models.CharField(
+        blank=True, null=True, default="", max_length=200, help_text="개화 시기"
+    )
+    features = models.CharField(
+        blank=True, null=True, default="", max_length=500, help_text="작물 특성"
+    )
 
     def __str__(self):
         return f"{self.id} {self.name}"
