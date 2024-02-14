@@ -49,3 +49,7 @@ class MyFarmDetailSerializer(serializers.ModelSerializer):
         if plant_log:
             return plant_log.complete_at
         return obj.start_at
+
+
+class FarmImageUpdateSerializer(serializers.Serializer):
+    farm_image = serializers.FileField()
