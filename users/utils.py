@@ -13,32 +13,18 @@ def get_random(length):
 
 
 def get_access_token(payload):
-    exp = timezone.now() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRATION_TIME)
-    return (
-        jwt.encode(
-            {
-                "exp": exp,
-                **payload,
-            },
-            settings.SECRET_KEY,
-            algorithm="HS256",
-        ),
-        exp,
+    return jwt.encode(
+        {"exp": datetime.now() + timedelta(minutes=5), **payload},
+        settings.SECRET_KEY,
+        algorithm="HS256",
     )
 
 
 def get_refresh_token():
-    exp = timezone.now() + timedelta(minutes=settings.REFRESH_TOKEN_EXPIRATION_TIME)
-    return (
-        jwt.encode(
-            {
-                "exp": exp,
-                "data": get_random(10),
-            },
-            settings.SECRET_KEY,
-            algorithm="HS256",
-        ),
-        exp,
+    return jwt.encode(
+        {"exp": datetime.now() + timedelta(days=365), "data": get_random(10)},
+        settings.SECRET_KEY,
+        algorithm="HS256",
     )
 
 
@@ -49,36 +35,8 @@ def decodeJWT(bearer):
     token = bearer[7:]
     try:
         decoded = jwt.decode(token, key=settings.SECRET_KEY, algorithms="HS256")
-        exp_datetime = datetime.utcfromtimestamp(decoded["exp"])
-        if exp_datetime < timezone.now():
-            raise CustomAuthorizationError({"data": "토큰이 만료되었습니다."})
     except jwt.exceptions.ExpiredSignatureError:
-        raise CustomAuthorizationError({"data": "토큰이 만료되었습니다."})
-    except jwt.exceptions.DecodeError:
-        raise CustomAuthorizationError({"data": "올바르지 않은 토큰입니다."})
-
-    if decoded:
-        try:
-            return User.objects.get(id=decoded["user_id"])
-        except User.DoesNotExist:
-            return None
-
-
-def middleware_decodeJWT(bearer):
-    if not bearer:
-        return None
-
-    token = bearer[7:]
-    try:
-        decoded = jwt.decode(token, key=settings.SECRET_KEY, algorithms="HS256")
-        exp_datetime = datetime.utcfromtimestamp(decoded["exp"])
-        if exp_datetime < timezone.now():
-            return "TOKEN_EXPIRED"
-    except jwt.exceptions.ExpiredSignatureError:
-        return "TOKEN_EXPIRED"
-    except jwt.exceptions.DecodeError:
-        return "TOKEN_INVALID"
-
+        raise CustomValidationError({"data": "토큰이 만료되었습니다."})
     if decoded:
         try:
             return User.objects.get(id=decoded["user_id"])

@@ -35,7 +35,7 @@ class LoginAPI(APIView):
         serializer.is_valid(raise_exception=True)
 
         user = authenticate(
-            phone_number=serializer.validated_data["username"],
+            username=serializer.validated_data["username"],
             password=serializer.validated_data["password"],
         )
 
@@ -53,7 +53,9 @@ class LoginAPI(APIView):
             refresh=refresh,
         )
 
-        return Response({"access": access, "refresh": refresh})
+        return Response(
+            status=status.HTTP_200_OK, data={"access": access, "refresh": refresh}
+        )
 
 
 class RefreshAPI(APIView):
