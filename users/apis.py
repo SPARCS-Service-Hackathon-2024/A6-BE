@@ -40,7 +40,7 @@ class LoginAPI(APIView):
         )
 
         if not user:
-            return Response({"error": "Invalid username or password"}, status="400")
+            return Response({"error": "등록된 유저가 아닙니다"}, status="400")
 
         Jwt.objects.filter(user_id=user.id).delete()
 
