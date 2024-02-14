@@ -11,7 +11,7 @@ class PlantType(CommonModel):
     repotting_cycle = models.PositiveIntegerField(help_text="분갈이 주기")
 
     def __str__(self):
-        return self.name
+        return f"{self.id} {self.name}"
 
 
 class Plant(CommonModel):
@@ -56,7 +56,7 @@ class PlantLog(CommonModel):
         help_text="로그 타입",
     )
     deadline = models.DateField(null=True, blank=True, help_text="마감일")
-    complete_at = models.DateField(null=True, blank=True, help_text="완료기간")
+    complete_at = models.DateField(null=True, blank=True, help_text="완료일")
     is_complete = models.BooleanField(default=False, help_text="완료 여부")
     plant = models.ForeignKey(
         "plant.Plant", related_name="logs", on_delete=models.CASCADE, help_text="식물"

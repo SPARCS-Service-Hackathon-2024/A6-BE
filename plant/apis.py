@@ -6,10 +6,12 @@ from .serializers import (
     PlantCreateSerializer,
     PlantReadSerializer,
 )
-from .models import PlantType, Plant
+from .models import PlantType, Plant, PlantLog
 from django.db import transaction
 from utils.media import save_media
 from utils.authentication import IsAuthenticatedCustom
+from datetime import datetime, timedelta
+from .utils import create_plant_log
 
 
 class PlantTypeCreateAPI(generics.ListCreateAPIView):
@@ -55,12 +57,33 @@ class PlantCreateAPI(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        main_image = serializer.validated_data.get("main_image")
+        main_image = serializer.validated_data.get("main_image", None)
         plant = serializer.save(user=request.user)
         if main_image:
-            file_path, original_name = save_media(main_image, "plant_types")
+            file_path, original_name = save_media(main_image, "plants")
             plant.main_image = file_path
             plant.save()
+        plant_type = plant.plant_type
+
+        last_watered_at = request.data.get("watered_at")
+        last_watered_at = datetime.strptime(last_watered_at, "%Y-%m-%d").date()
+        last_repotted_at = request.data.get("repotted_at")
+        last_repotted_at = datetime.strptime(last_repotted_at, "%Y-%m-%d").date()
+
+        PlantLog.objects.create(
+            plant=plant,
+            type="시작",
+            deadline=plant.start_at,
+            complete_at=plant.start_at,
+            is_complete=True,
+        )
+        watering_log = create_plant_log(
+            plant, "물주기", last_watered_at + timedelta(days=plant_type.watering_cycle)
+        )
+        repot_log = create_plant_log(
+            plant, "분갈이", last_repotted_at + timedelta(days=plant_type.repotting_cycle)
+        )
+
         serializer = self.read_serializer(plant)
         headers = self.get_success_headers(serializer.data)
         return Response(
