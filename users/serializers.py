@@ -9,6 +9,8 @@ class SignupSerializer(serializers.Serializer):
     password2 = serializers.CharField(min_length=8)
 
     def validate(self, data):
+        if User.objects.filter(username=data["username"]):
+            raise CustomValidationError({"data": "중복된 닉네임 입니다."})
         if data["password"] != data["password2"]:
             raise CustomValidationError({"data": "비밀번호가 일치하지 않습니다."})
         return data

@@ -108,7 +108,7 @@ class MyPlantLogListAPI(generics.GenericAPIView):
             type="분갈이", is_complete=False, deadline__lte=date.today()
         )
         watering_complete_query = queryset.filter(
-            type="분갈이", is_complete=True, complete_at=date.today()
+            type="물주기", is_complete=True, complete_at=date.today()
         )
         repotting_complete_query = queryset.filter(
             type="분갈이", is_complete=True, complete_at=date.today()
