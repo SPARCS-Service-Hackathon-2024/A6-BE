@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.conf import settings
-from .models import PlantType, Plant
+from .models import PlantType, Plant, PlantLog
 
 
 class PlantTypeCreateSerializer(serializers.ModelSerializer):
@@ -46,3 +46,24 @@ class PlantReadSerializer(serializers.ModelSerializer):
         if plant_type:
             return {"id": plant_type.id, "name": plant_type.name}
         return None
+
+
+class MyPlantLogReadSerializer(serializers.ModelSerializer):
+    plant = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PlantLog
+        fields = "__all__"
+
+    def get_plant(self, obj):
+        plant = obj.plant
+        if plant:
+            return {
+                "id": plant.id,
+                "main_image": settings.MEDIA_URL + plant.main_image
+                if plant.main_image
+                else None,
+                "nickname": plant.nickname,
+                "plant_type_name": plant.plant_type.name,
+            }
+        return {}

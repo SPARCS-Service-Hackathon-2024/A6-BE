@@ -1,5 +1,6 @@
 from django.db import models
 from common.models import CommonModel
+from django.utils import timezone
 
 
 class PlantType(CommonModel):
@@ -38,7 +39,7 @@ class Plant(CommonModel):
     )
 
     def __str__(self):
-        return f"{self.user.username}의 {self.nickname}({self.plant_type.name})"
+        return f"{self.user.username}의 {self.nickname}"
 
 
 class PlantLog(CommonModel):
@@ -61,6 +62,11 @@ class PlantLog(CommonModel):
     plant = models.ForeignKey(
         "plant.Plant", related_name="logs", on_delete=models.CASCADE, help_text="식물"
     )
+
+    def save(self, *args, **kwargs):
+        if self.is_complete and not self.complete_at:
+            self.complete_at = timezone.now()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return (

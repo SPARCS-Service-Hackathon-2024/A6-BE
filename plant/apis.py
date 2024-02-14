@@ -5,12 +5,13 @@ from .serializers import (
     PlantTypeReadSerializer,
     PlantCreateSerializer,
     PlantReadSerializer,
+    MyPlantLogReadSerializer,
 )
 from .models import PlantType, Plant, PlantLog
 from django.db import transaction
 from utils.media import save_media
 from utils.authentication import IsAuthenticatedCustom
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from .utils import create_plant_log
 
 
@@ -89,3 +90,37 @@ class PlantCreateAPI(generics.CreateAPIView):
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
+
+
+class MyPlantLogListAPI(generics.GenericAPIView):
+    queryset = PlantLog.objects.all()
+    permission_classes = (IsAuthenticatedCustom,)
+
+    def get_queryset(self):
+        return self.queryset.filter(plant__user=self.request.user)
+
+    def get(self, request):
+        queryset = self.get_queryset()
+        watering_query = queryset.filter(
+            type="물주기", is_complete=False, deadline__lte=date.today()
+        )
+        repotting_query = queryset.filter(
+            type="분갈이", is_complete=False, deadline__lte=date.today()
+        )
+        watering_complete_query = queryset.filter(
+            type="분갈이", is_complete=True, complete_at=date.today()
+        )
+        repotting_complete_query = queryset.filter(
+            type="분갈이", is_complete=True, complete_at=date.today()
+        )
+        data = {
+            "watering": MyPlantLogReadSerializer(watering_query, many=True).data,
+            "repotting": MyPlantLogReadSerializer(repotting_query, many=True).data,
+            "watering_complete": MyPlantLogReadSerializer(
+                watering_complete_query, many=True
+            ).data,
+            "repotting_complete": MyPlantLogReadSerializer(
+                repotting_complete_query, many=True
+            ).data,
+        }
+        return Response(data=data, status=status.HTTP_200_OK)
