@@ -63,3 +63,5 @@ CORS_ALLOW_METHODS = (
     "POST",
     "PUT",
 )
+
+CORS_ORIGIN_WHITELIST = ("http://localhost:5173/", "https://city-farmer.vercel.app/")
