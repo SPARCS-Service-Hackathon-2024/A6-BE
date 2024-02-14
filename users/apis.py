@@ -1,11 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from .serializers import (
     SignupSerializer,
     LoginSerializer,
     RefreshSerializer,
     UserSerializer,
+    CheckUsernameSerializer,
 )
 from .models import User, Jwt
 from .utils import get_access_token, get_refresh_token
@@ -93,3 +94,12 @@ class LogoutAPI(APIView):
         request.session.flush()
 
         return Response("logged out successfully", status=200)
+
+
+class CheckUsernameAPI(generics.GenericAPIView):
+    serializer_class = CheckUsernameSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response({"data": "사용 가능한 닉네임 입니다."}, status=200)

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from utils.exceptions import CustomValidationError
 from .models import User
+from utils.validator import UsernameValidator
 
 
 class SignupSerializer(serializers.Serializer):
@@ -29,3 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("username",)
+
+
+class CheckUsernameSerializer(serializers.Serializer):
+    username = serializers.CharField(validators=[UsernameValidator()])

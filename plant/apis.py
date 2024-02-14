@@ -124,3 +124,7 @@ class MyPlantLogListAPI(generics.GenericAPIView):
             ).data,
         }
         return Response(data=data, status=status.HTTP_200_OK)
+
+
+# class PlantLogCompleteAPI(generics.UpdateAPIView):
+# queryset = PlantLog.
