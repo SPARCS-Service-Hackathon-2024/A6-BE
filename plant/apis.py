@@ -208,3 +208,27 @@ class PlantDetailAPI(generics.RetrieveAPIView):
         record_data = PlantLogListSerializer(record_query, many=True).data
         data["records"] = record_data
         return Response(data)
+
+
+class PlantTodoCompleteAPI(generics.UpdateAPIView):
+    queryset = PlantLog.objects.all()
+    permission_classes = (IsAuthenticatedCustom,)
+
+    def update(self, request, *args, **kwargs):
+        user = request.user
+        instance = self.get_object()
+        if not instance.plant.user == user:
+            raise CustomValidationError({"data": "본인의 작물만 완료처리 할 수 있습니다."})
+        plant = instance.plant
+        type = instance.type
+        cycle = (
+            plant.plant_type.watering_cycle
+            if instance.type == "물주기"
+            else plant.plant_type.repotting_cycle
+        )
+        instance.is_complete = True
+        instance.save()
+
+        new_log = create_plant_log(plant, type, datetime.now() + timedelta(days=cycle))
+
+        return Response({"data": "complete !! ^^"})

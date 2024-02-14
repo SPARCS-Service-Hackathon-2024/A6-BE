@@ -5,6 +5,7 @@ from .apis import (
     MyPlantLogListAPI,
     PlantLogCompleteAPI,
     PlantDetailAPI,
+    PlantTodoCompleteAPI,
 )
 
 urlpatterns = [
@@ -13,4 +14,5 @@ urlpatterns = [
     path("type", PlantTypeCreateAPI.as_view()),
     path("log/my", MyPlantLogListAPI.as_view()),
     path("log/complete/<int:pk>", PlantLogCompleteAPI.as_view()),
+    path("todo/complete/<int:pk>", PlantTodoCompleteAPI.as_view()),
 ]
