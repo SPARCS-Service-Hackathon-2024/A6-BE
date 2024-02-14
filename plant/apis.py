@@ -82,6 +82,22 @@ class PlantCreateAPI(generics.CreateAPIView):
             complete_at=plant.start_at,
             is_complete=True,
         )
+        PlantLog.objects.create(
+            plant=plant,
+            type="물주기",
+            deadline=last_watered_at,
+            complete_at=last_watered_at,
+            is_complete=True,
+        )
+        if not last_repotted_at == plant.start_at:
+            PlantLog.objects.create(
+                plant=plant,
+                type="분갈이",
+                deadline=last_repotted_at,
+                complete_at=last_repotted_at,
+                is_complete=True,
+            )
+
         watering_log = create_plant_log(
             plant, "물주기", last_watered_at + timedelta(days=plant_type.watering_cycle)
         )

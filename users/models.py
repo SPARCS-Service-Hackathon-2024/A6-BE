@@ -86,6 +86,9 @@ class User(AbstractUser):
         max_length=150,
         unique=True,
     )
+    farm_image = models.TextField(
+        blank=True, null=True, default="", help_text="나의 밭 이미지"
+    )
 
     def __str__(self):
         return self.username
