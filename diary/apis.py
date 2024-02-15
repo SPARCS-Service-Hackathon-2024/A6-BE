@@ -73,3 +73,9 @@ class DiaryListAPI(generics.ListAPIView):
 class DiaryDetailAPI(generics.RetrieveAPIView):
     queryset = Diary.objects.all()
     serializer_class = DiaryDetailSerializer
+    permission_classes = (IsAuthenticatedCustom,)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context

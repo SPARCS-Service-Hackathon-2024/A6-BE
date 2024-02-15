@@ -122,6 +122,7 @@ class DiaryDetailSerializer(serializers.ModelSerializer):
     comment_count = serializers.SerializerMethodField()
     tagged_item_count = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
+    is_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Diary
@@ -139,6 +140,7 @@ class DiaryDetailSerializer(serializers.ModelSerializer):
             "comment_count",
             "tagged_item_count",
             "comments",
+            "is_liked",
         ]
 
     def get_tags(self, obj):
@@ -188,3 +190,9 @@ class DiaryDetailSerializer(serializers.ModelSerializer):
     def get_comments(self, obj):
         comments = Comment.objects.filter(diary=obj).all()
         return CommentListSerializer(comments, many=True).data
+
+    def get_is_liked(self, obj):
+        user = self.context["request"].user
+        if not user or user.is_anonymous:
+            return False
+        return Like.objects.filter(user=user, diary=obj).exists()
