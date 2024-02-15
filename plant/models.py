@@ -37,7 +37,7 @@ class PlantType(CommonModel):
     )
 
     def __str__(self):
-        return f"{self.id} {self.name}"
+        return f"{self.id} - {self.name}"
 
 
 class Plant(CommonModel):
@@ -64,7 +64,7 @@ class Plant(CommonModel):
     )
 
     def __str__(self):
-        return f"{self.user.username}의 {self.nickname}"
+        return f"{self.id} - {self.user.username}의 {self.nickname}"
 
 
 class PlantLog(CommonModel):
@@ -94,6 +94,4 @@ class PlantLog(CommonModel):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return (
-            f"{self.plant.nickname} {self.type} - {'완료' if self.is_complete else '미완료'}"
-        )
+        return f"{self.id} - {self.plant.nickname} {self.type} - {'완료' if self.is_complete else '미완료'}"

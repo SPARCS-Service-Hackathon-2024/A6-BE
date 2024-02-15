@@ -158,6 +158,10 @@ class PlantLogCompleteAPI(generics.UpdateAPIView):
         instance = self.get_object()
         if not instance.plant.user == user:
             raise CustomValidationError({"data": "본인의 작물만 완료처리 할 수 있습니다."})
+
+        if instance.is_complete:
+            raise CustomValidationError({"data": "이미 완료 상태 입니다."})
+
         plant = instance.plant
         type = instance.type
         cycle = (
