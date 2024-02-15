@@ -119,6 +119,9 @@ class MyPlantLogListAPI(generics.GenericAPIView):
     def get_queryset(self):
         return self.queryset.filter(plant__user=self.request.user)
 
+    def serializered_data(self, data):
+        return MyPlantLogReadSerializer(data, many=True).data
+
     def get(self, request):
         queryset = self.get_queryset()
         watering_query = queryset.filter(
@@ -133,16 +136,32 @@ class MyPlantLogListAPI(generics.GenericAPIView):
         repotting_complete_query = queryset.filter(
             type="분갈이", is_complete=True, complete_at=date.today()
         )
-        data = {
-            "watering": MyPlantLogReadSerializer(watering_query, many=True).data,
-            "repotting": MyPlantLogReadSerializer(repotting_query, many=True).data,
-            "watering_complete": MyPlantLogReadSerializer(
-                watering_complete_query, many=True
-            ).data,
-            "repotting_complete": MyPlantLogReadSerializer(
-                repotting_complete_query, many=True
-            ).data,
-        }
+        data = {"data": []}
+        if watering_query.exists():
+            data["data"].append(
+                {"type": "watering", "tasks": self.serializered_data(watering_query)}
+            )
+        if repotting_query.exists():
+            data["data"].append(
+                {"type": "repotting", "tasks": self.serializered_data(repotting_query)}
+            )
+        if watering_complete_query.exists():
+            data["data"].append(
+                {
+                    "type": "watering_complete",
+                    "tasks": self.serializered_data(watering_complete_query),
+                }
+            )
+        if repotting_complete_query.exists():
+            data["data"].append(
+                {
+                    "type": "repotting_complete",
+                    "tasks": self.serializered_data(
+                        repotting_complete_query, many=True
+                    ).data,
+                }
+            )
+
         return Response(data=data, status=status.HTTP_200_OK)
 
 
