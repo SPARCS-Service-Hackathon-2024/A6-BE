@@ -10,7 +10,9 @@ from .serializers import (
     PlantLogListSerializer,
     PlantTypeDetailSerializer,
 )
+from farm.serializers import MyFarmDetailSerializer
 from .models import PlantType, Plant, PlantLog
+from diary.models import DiaryPlant
 from django.db import transaction
 from utils.media import save_media
 from utils.authentication import IsAuthenticatedCustom
@@ -289,3 +291,22 @@ class PlantTodoCompleteAPI(generics.UpdateAPIView):
 class PlantTypeDetailAPI(generics.RetrieveAPIView):
     queryset = PlantType.objects.all()
     serializer_class = PlantTypeDetailSerializer
+
+
+class PlantTagListAPI(generics.ListAPIView):
+    queryset = Plant.objects.all()
+    serializer_class = MyFarmDetailSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+        diary_id = self.request.query_params.get("diary", None)
+        if not diary_id:
+            raise CustomValidationError({"data": "일지 정보가 없습니다."})
+        queryset = queryset.filter(diary_plants__diary_id=diary_id)
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"data": serializer.data})

@@ -3,8 +3,10 @@ from rest_framework.response import Response
 from plant.models import Plant
 from .serializers import MyFarmDetailSerializer, FarmImageUpdateSerializer
 from utils.authentication import IsAuthenticatedCustom
+from utils.exceptions import CustomValidationError
 from utils.media import save_media
 from django.conf import settings
+from users.models import User
 
 
 class MyFarmDetailAPI(generics.ListAPIView):
@@ -38,3 +40,35 @@ class FarmImageUpdateAPI(generics.GenericAPIView):
             user.farm_image = settings.MEDIA_URL + file_path
             user.save()
         return Response({"data": "success"})
+
+
+class UserFarmListAPI(generics.ListAPIView):
+    queryset = Plant.objects.all()
+    serializer_class = MyFarmDetailSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+        user_id = self.request.query_params.get("user", None)
+        if not user_id:
+            raise CustomValidationError({"data": "유저 정보를 보내야합니다"})
+        user = User.objects.filter(id=user_id).first()
+        if not user:
+            raise CustomValidationError({"data": "유저 정보가 없습니다"})
+        return queryset.filter(user=user).all()
+
+    def list(self, request, *args, **kwargs):
+        user_id = self.request.query_params.get("user", None)
+        if not user_id:
+            raise CustomValidationError({"data": "유저 정보를 보내야합니다"})
+        user = User.objects.filter(id=user_id).first()
+        if not user:
+            raise CustomValidationError({"data": "유저 정보가 없습니다"})
+        print(user)
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer_data = self.get_serializer(queryset, many=True).data
+        data = {
+            "farm_image": user.farm_image,
+            "plants": serializer_data,
+            "username": user.username,
+        }
+        return Response(data)

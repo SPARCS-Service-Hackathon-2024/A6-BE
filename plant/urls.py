@@ -7,12 +7,14 @@ from .apis import (
     PlantDetailAPI,
     PlantTodoCompleteAPI,
     PlantTypeDetailAPI,
+    PlantTagListAPI,
 )
 
 urlpatterns = [
     path("", PlantCreateAPI.as_view()),
     path("<int:pk>", PlantDetailAPI.as_view()),
     path("type", PlantTypeListCreateAPI.as_view()),
+    path("tag", PlantTagListAPI.as_view()),
     path("type/<int:pk>", PlantTypeDetailAPI.as_view()),
     path("log/my", MyPlantLogListAPI.as_view()),
     path("log/complete/<int:pk>", PlantLogCompleteAPI.as_view()),
