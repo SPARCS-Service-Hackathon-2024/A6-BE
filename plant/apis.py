@@ -62,7 +62,7 @@ class PlantCreateAPI(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        main_image = request.data.get("main_image", None)
+        main_image = serializer.validated_data.get("main_image", None)
         plant = serializer.save(user=request.user)
         if main_image:
             file_path, original_name = save_media(main_image, "plants")

@@ -31,9 +31,11 @@ class PlantTypeReadSerializer(serializers.ModelSerializer):
 
 
 class PlantCreateSerializer(serializers.ModelSerializer):
+    main_image = serializers.FileField(required=False, allow_null=True)
+
     class Meta:
         model = Plant
-        exclude = ("main_image",)
+        fields = "__all__"
 
 
 class PlantReadSerializer(serializers.ModelSerializer):
