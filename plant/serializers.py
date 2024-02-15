@@ -100,6 +100,7 @@ class PlantLogListSerializer(serializers.ModelSerializer):
 
 class PlantTypeDetailSerializer(serializers.ModelSerializer):
     main_image = serializers.SerializerMethodField()
+    features = serializers.SerializerMethodField()
 
     class Meta:
         model = PlantType
@@ -107,3 +108,9 @@ class PlantTypeDetailSerializer(serializers.ModelSerializer):
 
     def get_main_image(self, obj):
         return settings.MEDIA_URL + obj.main_image if obj.main_image else None
+
+    def get_features(self, obj):
+        features = obj.features
+        if features:
+            return list(features.split(","))
+        return []

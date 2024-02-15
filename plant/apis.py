@@ -19,7 +19,7 @@ from datetime import datetime, timedelta, date
 from .utils import create_plant_log
 
 
-class PlantTypeCreateAPI(generics.ListCreateAPIView):
+class PlantTypeListCreateAPI(generics.ListCreateAPIView):
     queryset = PlantType.objects.all()
     serializer_class = PlantTypeCreateSerializer
     read_serializer = PlantTypeReadSerializer
