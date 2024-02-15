@@ -40,7 +40,7 @@ class Diary(CommonModel):
     is_open = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.title} - {self.user.username}"
+        return f"{self.title} - {self.user.username if self.user else ''}"
 
 
 class DairyImage(CommonModel):
@@ -72,4 +72,4 @@ class DiaryPlant(CommonModel):
     )
 
     def __str__(self):
-        return f"{self.diary.title} -  {self.plant.name} ({self.id})"
+        return f"{self.diary.title} -  {self.plant.nickname} ({self.id})"
