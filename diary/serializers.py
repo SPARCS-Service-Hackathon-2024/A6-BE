@@ -63,6 +63,7 @@ class DiaryListSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
     like_count = serializers.SerializerMethodField()
     comment_count = serializers.SerializerMethodField()
+    created_at = serializers.SerializerMethodField()
 
     class Meta:
         model = Diary
@@ -105,6 +106,10 @@ class DiaryListSerializer(serializers.ModelSerializer):
 
     def get_comment_count(self, obj):
         return Comment.objects.filter(diary=obj).count()
+
+    def get_created_at(self, obj):
+        created_at = obj.created_at
+        return created_at.strftime("%Y-%m-%d")
 
 
 class DiaryDetailSerializer(serializers.ModelSerializer):
