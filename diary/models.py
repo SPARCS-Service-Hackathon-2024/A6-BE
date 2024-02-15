@@ -53,13 +53,21 @@ class DairyImage(CommonModel):
         return f"{self.diary.title} - sub image {self.path} ({self.id})"
 
 
-# class DiaryPlant(CommonModel):
-#     """DiaryPlant Model Definition"""
-#
-#     diary = models.ForeignKey(
-#         "diary.Diary", related_name="diary_plants", on_delete=models.CASCADE, help_text="일지"
-#     )
-#     plant = models.ForeignKey("plant.Plant", related_name="diary_plants", on_delete=models.CASCADE(), help_text="식물")
-#
-#     def __str__(self):
-#         return f"{self.diary.title} -  {self.plant.name} ({self.id})"
+class DiaryPlant(CommonModel):
+    """DiaryPlant Model Definition"""
+
+    diary = models.ForeignKey(
+        "diary.Diary",
+        related_name="diary_plants",
+        on_delete=models.CASCADE,
+        help_text="일지",
+    )
+    plant = models.ForeignKey(
+        "plant.Plant",
+        related_name="diary_plants",
+        on_delete=models.CASCADE,
+        help_text="식물",
+    )
+
+    def __str__(self):
+        return f"{self.diary.title} -  {self.plant.name} ({self.id})"
