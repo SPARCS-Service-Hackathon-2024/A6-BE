@@ -72,7 +72,7 @@ class MyPlantLogReadSerializer(serializers.ModelSerializer):
                 if plant.main_image
                 else None,
                 "nickname": plant.nickname,
-                "plant_type_name": plant.plant_type.name,
+                "plant_type_name": plant.plant_type.name if plant.plant_type else None,
             }
         return {}
 
