@@ -156,9 +156,7 @@ class MyPlantLogListAPI(generics.GenericAPIView):
             data["data"].append(
                 {
                     "type": "repotting_complete",
-                    "tasks": self.serializered_data(
-                        repotting_complete_query, many=True
-                    ).data,
+                    "tasks": self.serializered_data(repotting_complete_query),
                 }
             )
 
@@ -229,9 +227,7 @@ class PlantLogCompleteAPI(generics.UpdateAPIView):
             data["data"].append(
                 {
                     "type": "repotting_complete",
-                    "tasks": self.serializered_data(
-                        repotting_complete_query, many=True
-                    ).data,
+                    "tasks": self.serializered_data(repotting_complete_query),
                 }
             )
         return Response(data=data, status=status.HTTP_200_OK)
