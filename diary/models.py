@@ -2,7 +2,6 @@ from django.db import models
 from common.models import CommonModel
 
 
-# TODO : 타입에 따른 FK 설정, 검색 태그 설정
 class Diary(CommonModel):
     """Diary Model Definition"""
 
@@ -34,6 +33,9 @@ class Diary(CommonModel):
         on_delete=models.SET_NULL,
         null=True,
         help_text="작성자",
+    )
+    farm_image = models.TextField(
+        blank=True, null=True, default="", help_text="밭 자랑 이미지"
     )
     is_open = models.BooleanField(default=True)
 

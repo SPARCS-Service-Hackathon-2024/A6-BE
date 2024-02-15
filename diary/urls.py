@@ -1,3 +1,4 @@
 from django.urls import path
+from .apis import PlanetDiaryCreateAPI
 
-urlpatterns = []
+urlpatterns = [path("plant", PlanetDiaryCreateAPI.as_view())]
