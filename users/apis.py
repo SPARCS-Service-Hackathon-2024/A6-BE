@@ -55,7 +55,8 @@ class LoginAPI(APIView):
         )
 
         return Response(
-            status=status.HTTP_200_OK, data={"access": access, "refresh": refresh}
+            status=status.HTTP_200_OK,
+            data={"username": user.username, "access": access, "refresh": refresh},
         )
 
 
