@@ -1,4 +1,4 @@
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import GenericAPIView
 from .serializers import LikeDiarySerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,7 +7,7 @@ from diary.models import Diary
 from .models import Like
 
 
-class LikeDiaryAPI(ListAPIView):
+class LikeDiaryAPI(GenericAPIView):
     queryset = Like.objects.all()
     serializer_class = LikeDiarySerializer
     permission_classes = (IsAuthenticatedCustom,)
