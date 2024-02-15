@@ -80,16 +80,26 @@ class MyPlantLogReadSerializer(serializers.ModelSerializer):
 class PlantDetailSerializer(serializers.ModelSerializer):
     main_image = serializers.SerializerMethodField()
     plant_type_name = serializers.SerializerMethodField()
+    plant_type_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Plant
-        fields = ["nickname", "main_image", "start_at", "plant_type_name"]
+        fields = [
+            "nickname",
+            "main_image",
+            "start_at",
+            "plant_type_name",
+            "plant_type_id",
+        ]
 
     def get_main_image(self, obj):
         return settings.MEDIA_URL + obj.main_image if obj.main_image else None
 
     def get_plant_type_name(self, obj):
         return obj.plant_type.name
+
+    def get_plant_type_id(self, obj):
+        return obj.plant_type.id
 
 
 class PlantLogListSerializer(serializers.ModelSerializer):
