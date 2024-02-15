@@ -4,6 +4,7 @@ from utils.media import save_media
 from plant.models import Plant
 from like.models import Like
 from comment.models import Comment
+from comment.serializers import CommentListSerializer
 
 
 class PlanetDiaryCreateSerializer(serializers.ModelSerializer):
@@ -104,3 +105,81 @@ class DiaryListSerializer(serializers.ModelSerializer):
 
     def get_comment_count(self, obj):
         return Comment.objects.filter(diary=obj).count()
+
+
+class DiaryDetailSerializer(serializers.ModelSerializer):
+    tags = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
+    user_id = serializers.SerializerMethodField()
+    my_farm_item_count = serializers.SerializerMethodField()
+    like_count = serializers.SerializerMethodField()
+    comment_count = serializers.SerializerMethodField()
+    tagged_item_count = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Diary
+        fields = [
+            "id",
+            "type",
+            "title",
+            "description",
+            "tags",
+            "image",
+            "username",
+            "user_id",
+            "my_farm_item_count",
+            "like_count",
+            "comment_count",
+            "tagged_item_count",
+            "comments",
+        ]
+
+    def get_tags(self, obj):
+        plant_type_names = (
+            obj.diary_plants.all()
+            .values_list("plant__plant_type__name", flat=True)
+            .distinct()
+        )
+        plant_type_names_list = list(plant_type_names)
+        plant_type_names_list.append(obj.location)
+
+        return plant_type_names_list
+
+    def get_image(self, obj):
+        type = obj.type
+        if type == "농업일지":
+            diary_image = DairyImage.objects.filter(diary=obj)
+            if diary_image:
+                return diary_image.first().path
+            return ""
+        return obj.farm_image
+
+    def get_username(self, obj):
+        if obj.user:
+            return obj.user.username
+        return ""
+
+    def get_user_id(self, obj):
+        if obj.user:
+            return obj.user.id
+        return ""
+
+    def get_my_farm_item_count(self, obj):
+        if obj.user:
+            return obj.user.plants.count()
+        return 0
+
+    def get_like_count(self, obj):
+        return Like.objects.filter(diary=obj).count()
+
+    def get_comment_count(self, obj):
+        return Comment.objects.filter(diary=obj).count()
+
+    def get_tagged_item_count(self, obj):
+        return obj.diary_plants.all().count()
+
+    def get_comments(self, obj):
+        comments = Comment.objects.filter(diary=obj).all()
+        return CommentListSerializer(comments, many=True).data

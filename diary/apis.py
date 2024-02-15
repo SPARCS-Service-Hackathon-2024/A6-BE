@@ -5,6 +5,7 @@ from .serializers import (
     PlanetDiaryCreateSerializer,
     FarmDiaryCreateSerializer,
     DiaryListSerializer,
+    DiaryDetailSerializer,
 )
 from utils.authentication import IsAuthenticatedCustom
 
@@ -65,6 +66,10 @@ class DiaryListAPI(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-
         serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        return Response({"data": serializer.data})
+
+
+class DiaryDetailAPI(generics.RetrieveAPIView):
+    queryset = Diary.objects.all()
+    serializer_class = DiaryDetailSerializer
