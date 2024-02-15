@@ -7,4 +7,5 @@ urlpatterns = [
     path("plant/", include("plant.urls")),
     path("farm/", include("farm.urls")),
     path("diary/", include("diary.urls")),
+    path("like/", include("like.urls")),
 ]
