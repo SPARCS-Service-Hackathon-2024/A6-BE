@@ -14,9 +14,12 @@ class LikeDiaryAPI(ListAPIView):
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        instance = serializer.save()
         diary = request.data.get("diary", None)
         like_count = 0
         if diary:
             like_count = Like.objects.filter(diary_id=diary).count()
-        return Response(status=status.HTTP_200_OK, data={"like_count": like_count})
+        return Response(
+            status=status.HTTP_200_OK,
+            data={"like_count": like_count, "is_like": True if instance else False},
+        )
