@@ -8,6 +8,7 @@ from .models import Like
 
 
 class LikeDiaryAPI(ListAPIView):
+    queryset = Like.objects.all()
     serializer_class = LikeDiarySerializer
     permission_classes = (IsAuthenticatedCustom,)
 

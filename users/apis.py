@@ -14,6 +14,10 @@ from .authentication import Authentication
 from utils.authentication import IsAuthenticatedCustom
 from django.db import transaction
 from django.contrib.auth import authenticate
+from plant.models import Plant, PlantType, PlantLog
+from plant.utils import create_plant_log
+from utils.dummy import plants_data
+from datetime import timedelta, datetime
 
 
 class SignupAPI(APIView):
@@ -25,6 +29,49 @@ class SignupAPI(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.validated_data.pop("password2")
         user = User.objects._create_user(**serializer.validated_data)
+        # for data in plants_data:
+        #     plant_type = PlantType.objects.filter(name=data["type"]).first()
+        #     if not plant_type:
+        #         continue
+        #     plant = Plant.objects.create(nickname=data["nickname"], plant_type=plant_type, start_at=data["start_at"],
+        #                                  user=user, main_image=plant_type.main_image)
+        #     plant.save()
+        #
+        #     last_watered_at = data["last_watered_at"]
+        #     last_watered_at = datetime.strptime(last_watered_at, "%Y-%m-%d").date()
+        #     last_repotted_at = data["last_repotted_at"]
+        #     last_repotted_at = datetime.strptime(last_repotted_at, "%Y-%m-%d").date()
+        #
+        #     PlantLog.objects.create(
+        #         plant=plant,
+        #         type="시작",
+        #         deadline=plant.start_at,
+        #         complete_at=plant.start_at,
+        #         is_complete=True,
+        #     )
+        #     PlantLog.objects.create(
+        #         plant=plant,
+        #         type="물주기",
+        #         deadline=last_watered_at,
+        #         complete_at=last_watered_at,
+        #         is_complete=True,
+        #     )
+        #     if not last_repotted_at == plant.start_at:
+        #         PlantLog.objects.create(
+        #             plant=plant,
+        #             type="분갈이",
+        #             deadline=last_repotted_at,
+        #             complete_at=last_repotted_at,
+        #             is_complete=True,
+        #         )
+        #
+        #     watering_log = create_plant_log(
+        #         plant, "물주기", last_watered_at + timedelta(days=plant_type.watering_cycle)
+        #     )
+        #     repot_log = create_plant_log(
+        #         plant, "분갈이", last_repotted_at + timedelta(days=plant_type.repotting_cycle)
+        #     )
+
         return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
 
