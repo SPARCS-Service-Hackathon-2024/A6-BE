@@ -52,4 +52,4 @@ class MyFarmDetailSerializer(serializers.ModelSerializer):
 
 
 class FarmImageUpdateSerializer(serializers.Serializer):
-    farm_image = serializers.FileField()
+    farm_image = serializers.ImageField()
