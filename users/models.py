@@ -87,7 +87,10 @@ class User(AbstractUser):
         unique=True,
     )
     farm_image = models.TextField(
-        blank=True, null=True, default="", help_text="나의 밭 이미지"
+        blank=True,
+        null=True,
+        default="/media/farms/a49b542a35ce48e6979c92265d84ed2e.png",
+        help_text="나의 밭 이미지",
     )
 
     def __str__(self):
