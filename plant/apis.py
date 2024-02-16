@@ -69,7 +69,9 @@ class PlantCreateAPI(generics.CreateAPIView):
         if main_image:
             file_path, original_name = save_media(main_image, "plants")
             plant.main_image = file_path
-            plant.save()
+        if not plant.nickname:
+            plant.nickname = plant.plant_type.name
+        plant.save()
         plant_type = plant.plant_type
 
         last_watered_at = request.data.get("watered_at")

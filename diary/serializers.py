@@ -5,6 +5,7 @@ from plant.models import Plant
 from like.models import Like
 from comment.models import Comment
 from comment.serializers import CommentListSerializer
+from django.conf import settings
 
 
 class PlanetDiaryCreateSerializer(serializers.ModelSerializer):
@@ -86,9 +87,9 @@ class DiaryListSerializer(serializers.ModelSerializer):
         if type == "농업일지":
             diary_image = DairyImage.objects.filter(diary=obj)
             if diary_image:
-                return diary_image.first().path
+                return settings.MEDIA_URL + diary_image.first().path
             return ""
-        return obj.farm_image
+        return settings.MEDIA_URL + obj.farm_image
 
     def get_tags(self, obj):
         plant_type_names = (
@@ -159,9 +160,9 @@ class DiaryDetailSerializer(serializers.ModelSerializer):
         if type == "농업일지":
             diary_image = DairyImage.objects.filter(diary=obj)
             if diary_image:
-                return diary_image.first().path
+                return settings.MEDIA_URL + diary_image.first().path
             return ""
-        return obj.farm_image
+        return settings.MEDIA_URL + obj.farm_image
 
     def get_username(self, obj):
         if obj.user:
