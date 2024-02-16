@@ -29,7 +29,6 @@ class PlanetDiaryCreateSerializer(serializers.ModelSerializer):
         if image:
             file_path, original_name = save_media(image, "diary_plants")
             DairyImage.objects.create(diary=diary, path=file_path)
-
         if plants:
             for plant in plants:
                 diary_plant = DiaryPlant.objects.create(plant_id=plant, diary=diary)
