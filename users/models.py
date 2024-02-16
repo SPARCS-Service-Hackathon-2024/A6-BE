@@ -89,7 +89,7 @@ class User(AbstractUser):
     farm_image = models.TextField(
         blank=True,
         null=True,
-        default="/media/farms/a49b542a35ce48e6979c92265d84ed2e.png",
+        default="/media/farms/ab26494c84e8472f9390d7a46415b6de.png",
         help_text="나의 밭 이미지",
     )
 
